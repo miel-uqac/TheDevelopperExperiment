@@ -39,7 +39,8 @@ public class PlacementChecker : MonoBehaviour
     private void NewWave()
     {
         CorrectlyPlaced = false;
-        Cube = Instantiate(CubePrefab, CubeSpawnPoint.transform.position, CubeSpawnPoint.transform.rotation);
+        Vector3 realcubeSpawnPoint = CubeSpawnPoint.transform.position + new Vector3(0f, 0.5f, 0f);
+        Cube = Instantiate(CubePrefab, realcubeSpawnPoint, CubeSpawnPoint.transform.rotation);
         GameObject SpawnPoint = SpawnPoints[Random.Range(0, SpawnPoints.Count - 1)];
         PlacementArea = Instantiate(PlacementPrefab, SpawnPoint.transform.position, SpawnPoint.transform.rotation);
 
