@@ -22,12 +22,7 @@ public class PlacementChecker : MonoBehaviour
     private bool cubeInArea = false;
     private bool CorrectlyPlaced = false;
 
-    private void Start()
-    {
-        //StartCoroutine(MiniGame());
-    }
-
-    private IEnumerator MiniGame()
+    public IEnumerator MiniGame()
     {
         for (int i = 0; i < numberRounds; i++)
         {
