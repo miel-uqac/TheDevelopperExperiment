@@ -46,6 +46,13 @@ public class PlacementChecker : MonoBehaviour
         cubeScript.OnReleased += OnCubeReleased;
     }
 
+    public void RestartWave()
+    {
+        Destroy(Cube);
+        Destroy(PlacementArea);
+        NewWave();
+    }
+
     private void OnCubeInAreaChanged(bool isInArea)
     {
         cubeInArea = isInArea;
