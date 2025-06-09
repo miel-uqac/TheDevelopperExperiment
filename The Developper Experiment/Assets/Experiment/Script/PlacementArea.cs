@@ -5,22 +5,19 @@ public class PlacementArea : MonoBehaviour
 {
     public event Action<bool> OnCubeInAreaChanged;
 
-    public bool inArea = false;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Cube"))
+        if (other.CompareTag("L"))
         {
-            inArea = true;
             OnCubeInAreaChanged?.Invoke(true);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Cube"))
+        if (other.CompareTag("L"))
         {
-            inArea = false;
             OnCubeInAreaChanged?.Invoke(false);
         }
     }

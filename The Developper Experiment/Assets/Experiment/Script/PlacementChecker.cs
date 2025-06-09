@@ -24,7 +24,7 @@ public class PlacementChecker : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(MiniGame());
+        //StartCoroutine(MiniGame());
     }
 
     private IEnumerator MiniGame()
@@ -69,9 +69,8 @@ public class PlacementChecker : MonoBehaviour
         yield return new WaitForSeconds(0.1f); // attendre que le cube se pose
 
         float distance = Vector3.Distance(PlacementArea.transform.position, Cube.transform.position);
+        float yRotationDiff = Mathf.Abs(Mathf.DeltaAngle(Cube.transform.eulerAngles.y, PlacementArea.transform.eulerAngles.y));
 
-        //Ce qui nous intéresse c'est la différence de rotation a partir de 45 degrés
-        float yRotationDiff = Mathf.Abs(Cube.transform.eulerAngles.y - PlacementArea.transform.eulerAngles.y) % 45;
 
         Debug.Log("<color=green>[Event] Distance : " + distance.ToString("F3") + "</color>");
         Debug.Log("<color=blue>[Event] Rotation step diff : " + yRotationDiff + "</color>");
