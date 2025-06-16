@@ -24,9 +24,29 @@ public class SpawnManager : MonoBehaviour
     private List<Transform> m_Targets = new List<Transform>();
     private List<GameObject> currentObjects = new List<GameObject>();
 
+    private ExperimentManager experimentManager;
+
     private void Start()
     {
         Initiate();
+        experimentManager = FindFirstObjectByType<ExperimentManager>();
+        if (!experimentManager.startWithScreens)
+        {
+            switch (experimentManager.scenesCombo[experimentManager.currentScene])
+            {
+                default:
+                    break;
+                case 1:
+                    FirstTask();
+                    break;
+                case 2:
+                    SecondTask();
+                    break;
+                case 3:
+                    ThirdTask();
+                    break;
+            }
+        }
     }
 
     private void Initiate()
@@ -120,5 +140,8 @@ public class SpawnManager : MonoBehaviour
     public void EndAllTask()
     {
         EraseAllObjects();
+
+        ExperimentManager experimentManager = FindFirstObjectByType<ExperimentManager>();
+        experimentManager.NextTask();
     }
 }

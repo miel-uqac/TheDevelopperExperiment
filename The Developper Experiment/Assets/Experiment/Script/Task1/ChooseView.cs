@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
@@ -26,6 +27,13 @@ public class ChooseView : MonoBehaviour
 
     void Start()
     {
+        ExperimentManager experimentManager = FindFirstObjectByType<ExperimentManager>();
+        if (!experimentManager.startWithScreens)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
         ChangeMaterial(screenMaterial[currentScreen]);
         inputActionNext.action.performed += OnNextView;
         inputActionPrevious.action.performed += OnPreviousView;
@@ -70,29 +78,36 @@ public class ChooseView : MonoBehaviour
         inputActionShowScreen.action.started += ShowScreen;
         inputActionShowScreen.action.canceled += HideScreen;
 
+        StartCoroutine(RunTaskCoroutine());
+    }
+
+    private IEnumerator RunTaskCoroutine()
+    {
         switch (currentTask)
         {
             case 1:
                 PlacementChecker placementChecker = Manager.GetComponent<PlacementChecker>();
-                StartCoroutine(placementChecker.MiniGame());
+                yield return StartCoroutine(placementChecker.MiniGame());
                 break;
+
             case 2:
                 SpawnManager spawnManager = Manager.GetComponent<SpawnManager>();
                 spawnManager.FirstTask();
                 break;
+
             case 3:
                 SpawnManager spawnManager2 = Manager.GetComponent<SpawnManager>();
                 spawnManager2.SecondTask();
                 break;
+
             case 4:
                 SpawnManager spawnManager3 = Manager.GetComponent<SpawnManager>();
                 spawnManager3.ThirdTask();
                 break;
+
             default:
                 break;
         }
-
-        
     }
 
     private void OnDisable()

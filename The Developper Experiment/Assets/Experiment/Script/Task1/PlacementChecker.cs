@@ -24,6 +24,13 @@ public class PlacementChecker : MonoBehaviour
     private CubeInteractable cubeScriptLeft;
     private bool cubeInArea = false;
     private bool CorrectlyPlaced = false;
+    private ExperimentManager experimentManager;
+
+    private void Start()
+    {
+        experimentManager = FindFirstObjectByType<ExperimentManager>();
+        if (!experimentManager.startWithScreens) StartCoroutine(MiniGame());
+    }
 
     public IEnumerator MiniGame()
     {
@@ -32,6 +39,7 @@ public class PlacementChecker : MonoBehaviour
             NewWave();
             yield return new WaitUntil(() => CorrectlyPlaced);
         }
+        experimentManager.NextTask();
     }
 
     private void NewWave()
@@ -93,10 +101,10 @@ public class PlacementChecker : MonoBehaviour
 
         if ((distanceRight <= positionPrecision && yRotationDiffRight <= rotationPrecision) || (distanceLeft <= positionPrecision && yRotationDiffLeft <= rotationPrecision))
         {
-            CorrectlyPlaced = true;
             Destroy(CubeRight);
             Destroy (CubeLeft);
-            Destroy(PlacementArea);
+            Destroy(PlacementArea); 
+            CorrectlyPlaced = true;
         }
     }
 
