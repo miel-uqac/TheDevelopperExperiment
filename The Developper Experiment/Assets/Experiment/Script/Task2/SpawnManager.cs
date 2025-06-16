@@ -17,7 +17,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private GameObject m_RectanglePrefab;
     [SerializeField] private List<Material> m_Colours;
 
-
+    public int rounds;
 
     [SerializeField] private List<MaterialPair> m_ColourSecondTask;
 
@@ -27,7 +27,6 @@ public class SpawnManager : MonoBehaviour
     private void Start()
     {
         Initiate();
-        FirstTask();
     }
 
     private void Initiate()
@@ -42,8 +41,9 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    private void FirstTask()
+    public void FirstTask()
     {
+        EraseAllObjects();
         int index = Random.Range(0, m_Targets.Count);
         int firstcolour = Random.Range(0, m_Colours.Count);
         List<Transform> targets = new List<Transform>(m_Targets);

@@ -37,21 +37,38 @@ public class ObjectManager : MonoBehaviour
         if (isRectangle)
         {
             manager = FindFirstObjectByType<SpawnManager>();
+            manager.rounds--;
+            if (manager.rounds == 0)
+            {
+                manager.EndAllTask();
+                return;
+            }
+            manager.FirstTask();
+            return;
+        }
+
+        if (isFake)
+        {
+            manager = FindFirstObjectByType<SpawnManager>();
+            manager.rounds--;
+            if (manager.rounds == 0)
+            {
+                manager.EndAllTask();
+                return;
+            }
             manager.SecondTask();
             return;
         }
-
-        if (isFake) 
-        {
-            manager = FindFirstObjectByType<SpawnManager>();
-            manager.ThirdTask();
-            return;
-        }
-
         if (isMoving)
         {
             manager = FindFirstObjectByType<SpawnManager>();
-            manager.EndAllTask();
+            manager.rounds--;
+            if (manager.rounds == 0)
+            {
+                manager.EndAllTask();
+                return;
+            }
+            manager.ThirdTask();
             return;
         }
 

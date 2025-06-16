@@ -2,11 +2,14 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 public class ChooseView : MonoBehaviour
 {
     public List<Material> screenMaterialTransparent;
     public List<Material> screenMaterial;
+    public Image myImage; // Assigne l'image dans l'inspecteur
 
     private int currentScreen = 0;
 
@@ -15,7 +18,9 @@ public class ChooseView : MonoBehaviour
     public InputActionReference inputActionFinish;
     public InputActionReference inputActionShowScreen;
 
-    public PlacementChecker Manager;
+    public int currentTask;
+
+    public GameObject Manager;
     public GameObject text;
     public float transparencyStrength;
 
@@ -59,12 +64,35 @@ public class ChooseView : MonoBehaviour
 
         text.SetActive(false);
 
+        SetOpacity(0.2f);
         ChangeMaterial(screenMaterialTransparent[currentScreen]);
 
         inputActionShowScreen.action.started += ShowScreen;
         inputActionShowScreen.action.canceled += HideScreen;
 
-        StartCoroutine(Manager.MiniGame());
+        switch (currentTask)
+        {
+            case 1:
+                PlacementChecker placementChecker = Manager.GetComponent<PlacementChecker>();
+                StartCoroutine(placementChecker.MiniGame());
+                break;
+            case 2:
+                SpawnManager spawnManager = Manager.GetComponent<SpawnManager>();
+                spawnManager.FirstTask();
+                break;
+            case 3:
+                SpawnManager spawnManager2 = Manager.GetComponent<SpawnManager>();
+                spawnManager2.SecondTask();
+                break;
+            case 4:
+                SpawnManager spawnManager3 = Manager.GetComponent<SpawnManager>();
+                spawnManager3.ThirdTask();
+                break;
+            default:
+                break;
+        }
+
+        
     }
 
     private void OnDisable()
@@ -82,11 +110,20 @@ public class ChooseView : MonoBehaviour
     private void ShowScreen(InputAction.CallbackContext context)
     {
         ChangeMaterial(screenMaterial[currentScreen]);
+        SetOpacity(0.8f);
     }
 
     private void HideScreen(InputAction.CallbackContext context)
     {
         ChangeMaterial(screenMaterialTransparent[currentScreen]);
+        SetOpacity(0.2f);
+    }
+
+    private void SetOpacity(float alpha)
+    {
+        Color color = myImage.color;
+        color.a = Mathf.Clamp01(alpha);
+        myImage.color = color;
     }
 
 }
