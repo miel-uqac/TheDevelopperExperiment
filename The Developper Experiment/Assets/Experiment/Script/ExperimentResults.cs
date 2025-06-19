@@ -6,14 +6,7 @@ using UnityEngine;
 using static Unity.Collections.Unicode;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.SceneManagement;
-
-public class task1Result
-{
-    public float time;
-    public float position;
-    public float rotation;
-    public int errors;
-}
+using System;
 
 public class task2Result
 {
@@ -61,20 +54,9 @@ public class ExperimentResults : MonoBehaviour
     private void Start()
     {
         currentRound = 0;
-        filename = Application.dataPath + "/Experiment/Results/results_" + numberParticipant + ".csv";
+        filename = Application.dataPath + "/Experiment/Results/results_" + numberParticipant + "_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".csv";
         CreateResultsFile();
 }
-
-    public void AddResultTask1(float time, float position, float rotation, int errors)
-    {
-        task1Result result = new task1Result();
-        result.time = time;
-        result.position = position;
-        result.rotation = rotation;
-        result.errors = errors;
-
-        WriteTask1Results(result);
-    }
 
     public void AddResultTask2(float time, int errors)
     {
@@ -82,7 +64,7 @@ public class ExperimentResults : MonoBehaviour
         result.time = time;
         result.errors = errors;
 
-        WriteTask2Results(result);
+        WriteLogs(result);
     }
 
     private void CreateResultsFile()
@@ -95,7 +77,7 @@ public class ExperimentResults : MonoBehaviour
             {
                 if (!fileExists)
                 {
-                    tw.WriteLine($"ID : {numberParticipant}; Task ; Screens; Round; Result");
+                    tw.WriteLine($"ID; Task ; Round; Screen; Screen Time; Round Time; Errors");
                 }
             }
 
@@ -111,98 +93,6 @@ public class ExperimentResults : MonoBehaviour
         }
     }
 
-    private void WriteTask1Results(task1Result res)
-    {
-        using (StreamWriter writer = new StreamWriter(filename, true))  // true = append mode
-        {
-
-            float timeInSeconds = res.time;
-
-            int minutes = Mathf.FloorToInt(timeInSeconds / 60f);
-            float seconds = timeInSeconds % 60f;
-
-            // Formate le temps en minutes et secondes
-            string formattedTime;
-            if (minutes > 0)
-            {
-                formattedTime = string.Format("{0} min {1:00.00} s", minutes, seconds);
-            }
-            else
-            {
-                formattedTime = string.Format("{0:0.00} s", seconds);
-            }
-
-            if (currentRound == 0)
-            {
-                writer.WriteLine();
-                currentRound++;
-                writer.WriteLine($" ; {experimentManager.scenesCombo[experimentManager.currentScene] + 1} ; ; {currentRound}; {formattedTime}");
-            }
-            else
-            {
-                currentRound++;
-                writer.WriteLine($" ; ; ;{currentRound}; {formattedTime}");
-            }
-
-            string firstColumns = " ; ; ; ;";
-
-            writer.WriteLine(firstColumns + res.position.ToString("F3"));
-            writer.WriteLine(firstColumns + res.rotation.ToString("F3"));
-            writer.WriteLine(firstColumns + res.errors);
-
-#if UNITY_EDITOR
-            // Force Unity à recharger les assets
-            AssetDatabase.Refresh();  // Rafraîchissement de la base de données d'assets
-            AssetDatabase.ImportAsset(filename);  // Assurer l'importation immédiate du fichier
-#endif
-        }
-    }
-
-    private void WriteTask2Results(task2Result res)
-    {
-        using (StreamWriter writer = new StreamWriter(filename, true))  // true = append mode
-        {
-
-            float timeInSeconds = res.time;
-
-            int minutes = Mathf.FloorToInt(timeInSeconds / 60f);
-            float seconds = timeInSeconds % 60f;
-
-            // Formate le temps en minutes et secondes
-            string formattedTime;
-            if (minutes > 0)
-            {
-                formattedTime = string.Format("{0} min {1:00.00} s", minutes, seconds);
-            }
-            else
-            {
-                formattedTime = string.Format("{0:0.00} s", seconds);
-            }
-
-            if (currentRound == 0)
-            {
-                writer.WriteLine();
-                currentRound++;
-                writer.WriteLine($" ; {experimentManager.scenesCombo[experimentManager.currentScene] + 1} ; ; {currentRound}; {formattedTime}");
-            }
-            else
-            {
-                currentRound++;
-                writer.WriteLine($" ; ; ;{currentRound}; {formattedTime}");
-            }
-
-            string firstColumns = " ; ; ; ;";
-
-            writer.WriteLine(firstColumns + res.errors);
-
-#if UNITY_EDITOR
-            // Force Unity à recharger les assets
-            AssetDatabase.Refresh();  // Rafraîchissement de la base de données d'assets
-            AssetDatabase.ImportAsset(filename);  // Assurer l'importation immédiate du fichier
-#endif
-        }
-    }
-
     public void WriteTotalScreenTime()
     {
         using (StreamWriter writer = new StreamWriter(filename, true))  // true = append mode
@@ -215,5 +105,56 @@ public class ExperimentResults : MonoBehaviour
             else writer.WriteLine($" ; ; Screen : None");
         }
 
+    }
+
+    private void WriteLogs(task2Result res)
+    {
+        using (StreamWriter writer = new StreamWriter(filename, true))  // true = append mode
+        {
+            float timeInSeconds = res.time;
+
+            int minutes = Mathf.FloorToInt(timeInSeconds / 60f);
+            float seconds = timeInSeconds % 60f;
+
+            // Formate le temps en minutes et secondes
+            string formattedTime;
+            if (minutes > 0)
+            {
+                formattedTime = string.Format("{0} min {1:00.00} s", minutes, seconds);
+            }
+            else
+            {
+                formattedTime = string.Format("{0:0.00} s", seconds);
+            }
+
+            currentRound++;
+            ChooseView chooseView = FindFirstObjectByType<ChooseView>();
+            if (!chooseView)
+            {
+                writer.WriteLine($"{numberParticipant}; " +
+                $"{experimentManager.scenesCombo[experimentManager.currentScene] + 1}; " +
+                $"{currentRound}; " +
+                $"None;" +
+                $"0.00 s;" +
+                $"{formattedTime};" +
+                $"{res.errors}");
+            }
+            else
+            {
+                writer.WriteLine($"{numberParticipant}; " +
+                    $"{experimentManager.scenesCombo[experimentManager.currentScene] + 1}; " +
+                    $"{currentRound}; " +
+                    $"{chooseView.GetScreen()}; " +
+                    $"{chooseView.GetTime()};" +
+                    $"{formattedTime};" +
+                    $"{res.errors}");
+            }
+
+#if UNITY_EDITOR
+            // Force Unity à recharger les assets
+            AssetDatabase.Refresh();  // Rafraîchissement de la base de données d'assets
+            AssetDatabase.ImportAsset(filename);  // Assurer l'importation immédiate du fichier
+#endif
+        }
     }
 }

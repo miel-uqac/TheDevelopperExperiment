@@ -15,7 +15,7 @@ public class ChooseView : MonoBehaviour
     public Image myImage; // Assigne l'image dans l'inspecteur
 
     private int currentScreen = 0;
-    private float timer;
+    public float timer;
     private bool isShowing;
 
     public InputActionReference inputActionNext;

@@ -118,7 +118,7 @@ public class PlacementChecker : MonoBehaviour
             Destroy(PlacementArea);
             CorrectlyPlaced = true;
 
-            results.AddResultTask1(timer, distanceRight, yRotationDiffRight, errors);
+            //results.AddResultTask1(timer, distanceRight, yRotationDiffRight, errors);
             errors = 0;
             timer = 0;
         }
@@ -129,7 +129,7 @@ public class PlacementChecker : MonoBehaviour
             Destroy(PlacementArea);
             CorrectlyPlaced = true;
 
-            results.AddResultTask1(timer, distanceLeft, yRotationDiffLeft, errors);
+            //results.AddResultTask1(timer, distanceLeft, yRotationDiffLeft, errors);
 
             errors = 0;
             timer = 0;

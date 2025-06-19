@@ -8,24 +8,23 @@ using UnityEngine.SceneManagement;
 
 public enum ExperimentVariable
 {
-    Combo1234,
-    Combo4123,
-    Combo3412,
-    Combo2341
+    Combo123,
+    Combo213,
+    Combo321
 }
 
 public class ExperimentManager : MonoBehaviour
 {
     private static ExperimentManager instance;
-    [SerializeField] private ExperimentResults experimentResults;
 
     public bool startWithScreens;
-    public ExperimentVariable variable = ExperimentVariable.Combo1234;
-    public bool secondScene;
+    public ExperimentVariable variable = ExperimentVariable.Combo123;
 
     public int[] scenesCombo;
     public int currentScene = 0;
     public float waitingTime;
+
+    private bool secondRun;
 
     void Awake()
     {
@@ -55,37 +54,35 @@ public class ExperimentManager : MonoBehaviour
     {
         switch (variable)
         {
-            case ExperimentVariable.Combo1234:
-                scenesCombo = new int[] { 0, 1, 2, 3 };
+            case ExperimentVariable.Combo123:
+                scenesCombo = new int[] { 0, 1, 2 };
                 break;
 
-            case ExperimentVariable.Combo4123:
-                scenesCombo = new int[] { 3, 0, 1, 2 };
+            case ExperimentVariable.Combo213:
+                scenesCombo = new int[] { 1, 0, 2 };
                 break;
 
-            case ExperimentVariable.Combo3412:
-                scenesCombo = new int[] { 2, 3, 0, 1 };
-                break;
-
-            case ExperimentVariable.Combo2341:
-                scenesCombo = new int[] { 1, 2, 3, 0 };
+            case ExperimentVariable.Combo321:
+                scenesCombo = new int[] { 2, 1, 0 };
                 break;
 
             default:
-                scenesCombo = new int[] { 0, 1, 2, 3 }; // Valeur par défaut
+                scenesCombo = new int[] { 0, 1, 2 }; // Valeur par défaut
                 break;
         }
     }
 
     public void NextTask()
     {
-        experimentResults.WriteTotalScreenTime();
-        startWithScreens = !startWithScreens;
-        secondScene = !secondScene;
-        if (secondScene) SceneManager.LoadScene(scenesCombo[currentScene]);
-        else
+        currentScene++;
+        if (currentScene == scenesCombo.Length)
         {
-            if (currentScene++ < scenesCombo.Length) SceneManager.LoadScene(scenesCombo[currentScene]);
+            if (secondRun) return;
+            secondRun = true;
+            currentScene = 0;
+            startWithScreens = !startWithScreens;
         }
+
+        SceneManager.LoadScene(scenesCombo[currentScene]);
     }
 }

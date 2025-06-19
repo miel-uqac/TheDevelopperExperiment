@@ -1,0 +1,7 @@
+ID; Task ; Round; Screen; Screen Time; Round Time; Errors
+2; 3; 1; Back; 32,09 s;46,53 s;1
+2; 2; 1; Back; 2,01 s;4,43 s;1
+2; 1; 1; Back; 3,49 s;7,25 s;0
+2; 3; 1; None;0.00s;25,30 s;1
+2; 2; 1; None;0.00s;3,76 s;0
+2; 1; 1; None;0.00s;10,05 s;1

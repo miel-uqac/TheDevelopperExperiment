@@ -41,13 +41,13 @@ public class SpawnManager : MonoBehaviour
             {
                 default:
                     break;
-                case 1:
+                case 0:
                     FirstTask();
                     break;
-                case 2:
+                case 1:
                     SecondTask();
                     break;
-                case 3:
+                case 2:
                     ThirdTask();
                     break;
             }
@@ -137,7 +137,6 @@ public class SpawnManager : MonoBehaviour
 
         GameObject movingCube = Instantiate(m_CubePrefab, targets[index].position, Random.rotation);
         movingCube.GetComponent<MeshRenderer>().material = m_Colours[firstcolour];
-        movingCube.GetComponent<Animator>().enabled = false;
         movingCube.GetComponentInChildren<ObjectManager>().isMoving = true;
         targets.Remove(targets[index]);
         currentObjects.Add(movingCube);
@@ -162,6 +161,8 @@ public class SpawnManager : MonoBehaviour
     public void WriteResults()
     {
         results.AddResultTask2(timer, errors);
+        ChooseView chooseView = FindFirstObjectByType<ChooseView>();
+        if (chooseView) chooseView.timer = 0;
         errors = 0;
         timer = 0;
     }
