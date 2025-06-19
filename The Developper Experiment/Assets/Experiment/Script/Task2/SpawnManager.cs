@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.ProBuilder.Shapes;
 
@@ -69,6 +70,13 @@ public class SpawnManager : MonoBehaviour
                 m_Targets.Add(child);
             }
         }
+
+        GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("Cube");
+        foreach (GameObject obj in gameObjects)
+        {
+            Destroy(obj);
+        }
+        
     }
 
     public void FirstTask()
