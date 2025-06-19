@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,6 +17,7 @@ public enum ExperimentVariable
 public class ExperimentManager : MonoBehaviour
 {
     private static ExperimentManager instance;
+    [SerializeField] private ExperimentResults experimentResults;
 
     public bool startWithScreens;
     public ExperimentVariable variable = ExperimentVariable.Combo1234;
@@ -22,6 +25,7 @@ public class ExperimentManager : MonoBehaviour
 
     public int[] scenesCombo;
     public int currentScene = 0;
+    public float waitingTime;
 
     void Awake()
     {
@@ -42,6 +46,13 @@ public class ExperimentManager : MonoBehaviour
 
     private IEnumerator StartExperimentCoroutine()
     {
+        Initiate();
+        yield return new WaitForSeconds(waitingTime);
+        SceneManager.LoadScene(scenesCombo[0]);
+    }
+
+    private void Initiate()
+    {
         switch (variable)
         {
             case ExperimentVariable.Combo1234:
@@ -49,7 +60,7 @@ public class ExperimentManager : MonoBehaviour
                 break;
 
             case ExperimentVariable.Combo4123:
-                scenesCombo = new int[] {3, 0, 1, 2 };
+                scenesCombo = new int[] { 3, 0, 1, 2 };
                 break;
 
             case ExperimentVariable.Combo3412:
@@ -64,14 +75,11 @@ public class ExperimentManager : MonoBehaviour
                 scenesCombo = new int[] { 0, 1, 2, 3 }; // Valeur par défaut
                 break;
         }
-
-        yield return new WaitForSeconds(5.0f);
-
-        SceneManager.LoadScene(scenesCombo[0]);
     }
 
     public void NextTask()
     {
+        experimentResults.WriteTotalScreenTime();
         startWithScreens = !startWithScreens;
         secondScene = !secondScene;
         if (secondScene) SceneManager.LoadScene(scenesCombo[currentScene]);

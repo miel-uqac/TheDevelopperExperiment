@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using NUnit.Framework;
+using UnityEditor.Toolbars;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -13,6 +15,8 @@ public class ChooseView : MonoBehaviour
     public Image myImage; // Assigne l'image dans l'inspecteur
 
     private int currentScreen = 0;
+    private float timer;
+    private bool isShowing;
 
     public InputActionReference inputActionNext;
     public InputActionReference inputActionPrevious;
@@ -38,6 +42,11 @@ public class ChooseView : MonoBehaviour
         inputActionNext.action.performed += OnNextView;
         inputActionPrevious.action.performed += OnPreviousView;
         inputActionFinish.action.performed += FinishSelection;
+    }
+
+    private void Update()
+    {
+        if (isShowing) timer += Time.deltaTime;
     }
 
     private void OnNextView(InputAction.CallbackContext context)
@@ -126,12 +135,14 @@ public class ChooseView : MonoBehaviour
     {
         ChangeMaterial(screenMaterial[currentScreen]);
         SetOpacity(0.8f);
+        isShowing = true;
     }
 
     private void HideScreen(InputAction.CallbackContext context)
     {
         ChangeMaterial(screenMaterialTransparent[currentScreen]);
         SetOpacity(0.2f);
+        isShowing = false;
     }
 
     private void SetOpacity(float alpha)
@@ -139,6 +150,46 @@ public class ChooseView : MonoBehaviour
         Color color = myImage.color;
         color.a = Mathf.Clamp01(alpha);
         myImage.color = color;
+    }
+
+    public string GetScreen()
+    {
+        switch (currentScreen)
+        {
+            case 0:
+                return "Back";
+            case 1:
+                return "Front";
+            case 2:
+                return "Left";
+            case 3:
+                return "Right";
+            case 4:
+                return "Up";
+            default:
+                return "None";
+        }
+    }
+
+    public string GetTime()
+    {
+        float timeInSeconds = timer;
+
+        int minutes = Mathf.FloorToInt(timeInSeconds / 60f);
+        float seconds = timeInSeconds % 60f;
+
+        // Formate le temps en minutes et secondes
+        string formattedTime;
+        if (minutes > 0)
+        {
+            formattedTime = string.Format("{0} min {1:00.00} s", minutes, seconds);
+        }
+        else
+        {
+            formattedTime = string.Format("{0:0.00} s", seconds);
+        }
+
+        return formattedTime;
     }
 
 }

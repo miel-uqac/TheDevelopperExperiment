@@ -25,11 +25,16 @@ public class SpawnManager : MonoBehaviour
     private List<GameObject> currentObjects = new List<GameObject>();
 
     private ExperimentManager experimentManager;
+    private ExperimentResults results;
+    public int errors;
+    private float timer;
+    private bool gameStarted;
 
     private void Start()
     {
         Initiate();
         experimentManager = FindFirstObjectByType<ExperimentManager>();
+        results = FindFirstObjectByType<ExperimentResults>();
         if (!experimentManager.startWithScreens)
         {
             switch (experimentManager.scenesCombo[experimentManager.currentScene])
@@ -49,6 +54,11 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+       if (gameStarted) timer += Time.deltaTime;
+    }
+
     private void Initiate()
     {
         foreach (GameObject obj in m_SpawnPoints)
@@ -63,6 +73,7 @@ public class SpawnManager : MonoBehaviour
 
     public void FirstTask()
     {
+        gameStarted = true;
         EraseAllObjects();
         int index = Random.Range(0, m_Targets.Count);
         int firstcolour = Random.Range(0, m_Colours.Count);
@@ -89,10 +100,12 @@ public class SpawnManager : MonoBehaviour
             Destroy(obj);
         }
         currentObjects.Clear();
+        errors = 0;
     }
 
     public void SecondTask()
     {
+        gameStarted = true;
         EraseAllObjects();
 
         int index = Random.Range(0, m_Targets.Count);
@@ -115,6 +128,7 @@ public class SpawnManager : MonoBehaviour
 
     public void ThirdTask()
     {
+        gameStarted = true;
         EraseAllObjects();
 
         int index = Random.Range(0, m_Targets.Count);
@@ -143,5 +157,12 @@ public class SpawnManager : MonoBehaviour
 
         ExperimentManager experimentManager = FindFirstObjectByType<ExperimentManager>();
         experimentManager.NextTask();
+    }
+
+    public void WriteResults()
+    {
+        results.AddResultTask2(timer, errors);
+        errors = 0;
+        timer = 0;
     }
 }

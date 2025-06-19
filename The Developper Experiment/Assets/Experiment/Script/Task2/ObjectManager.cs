@@ -9,10 +9,16 @@ public class ObjectManager : MonoBehaviour
     public bool isFake = false;
     public bool isMoving = false;
     public float speed = 100;
+    
 
     private void Awake()
     {
         m_Animator = GetComponentInParent<Animator>();
+    }
+
+    private void Start()
+    {
+        manager = FindFirstObjectByType<SpawnManager>();
     }
 
     private void Update()
@@ -36,42 +42,45 @@ public class ObjectManager : MonoBehaviour
     {
         if (isRectangle)
         {
-            manager = FindFirstObjectByType<SpawnManager>();
             manager.rounds--;
             if (manager.rounds == 0)
             {
+                manager.WriteResults();
                 manager.EndAllTask();
                 return;
             }
+            manager.WriteResults();
             manager.FirstTask();
             return;
         }
 
         if (isFake)
         {
-            manager = FindFirstObjectByType<SpawnManager>();
             manager.rounds--;
             if (manager.rounds == 0)
             {
+                manager.WriteResults();
                 manager.EndAllTask();
                 return;
             }
+            manager.WriteResults();
             manager.SecondTask();
             return;
         }
         if (isMoving)
         {
-            manager = FindFirstObjectByType<SpawnManager>();
             manager.rounds--;
             if (manager.rounds == 0)
             {
+                manager.WriteResults();
                 manager.EndAllTask();
                 return;
             }
+            manager.WriteResults();
             manager.ThirdTask();
             return;
         }
-
+        manager.errors++;
         Destroy(gameObject.transform.parent.gameObject);
     }
 }

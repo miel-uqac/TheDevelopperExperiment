@@ -25,15 +25,27 @@ public class PlacementChecker : MonoBehaviour
     private bool cubeInArea = false;
     private bool CorrectlyPlaced = false;
     private ExperimentManager experimentManager;
+    private ExperimentResults results;
+    private int errors;
+    private float timer;
+    private bool gameStarted;
 
     private void Start()
     {
         experimentManager = FindFirstObjectByType<ExperimentManager>();
+        results = FindFirstObjectByType<ExperimentResults>();
+        if (results == null) Debug.Log("<color=red>Pas de res !</color>");
         if (!experimentManager.startWithScreens) StartCoroutine(MiniGame());
+    }
+
+    private void Update()
+    {
+        if (gameStarted) timer += Time.deltaTime;
     }
 
     public IEnumerator MiniGame()
     {
+        gameStarted = true;
         for (int i = 0; i < numberRounds; i++)
         {
             NewWave();
@@ -99,13 +111,30 @@ public class PlacementChecker : MonoBehaviour
         Debug.Log("<color=green>[Event] Distance : " + distanceRight.ToString("F3") + "</color>");
         Debug.Log("<color=blue>[Event] Rotation step diff : " + yRotationDiffRight + "</color>");
 
-        if ((distanceRight <= positionPrecision && yRotationDiffRight <= rotationPrecision) || (distanceLeft <= positionPrecision && yRotationDiffLeft <= rotationPrecision))
+        if (distanceRight <= positionPrecision && yRotationDiffRight <= rotationPrecision)
         {
             Destroy(CubeRight);
-            Destroy (CubeLeft);
-            Destroy(PlacementArea); 
+            Destroy(CubeLeft);
+            Destroy(PlacementArea);
             CorrectlyPlaced = true;
+
+            results.AddResultTask1(timer, distanceRight, yRotationDiffRight, errors);
+            errors = 0;
+            timer = 0;
         }
+        else if (distanceLeft <= positionPrecision && yRotationDiffLeft <= rotationPrecision)
+        {
+            Destroy(CubeRight);
+            Destroy(CubeLeft);
+            Destroy(PlacementArea);
+            CorrectlyPlaced = true;
+
+            results.AddResultTask1(timer, distanceLeft, yRotationDiffLeft, errors);
+
+            errors = 0;
+            timer = 0;
+        }
+        else errors++;
     }
 
 }
